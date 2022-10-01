@@ -25,8 +25,8 @@ Route::post('student/quit/{id}', [ServicesController::class, 'quit']);
 
 //Route for lists about students
 Route::post('student/list/gender', [ServicesController::class, 'get_student_by_grade_and_gender']);        
-Route::get('student/list/quit/{grade}/{year}', [ServicesController::class, 'get_student_quitting']);      
-Route::get('student/list/retaking_exam/{grade}/{year}', [ServicesController::class, 'get_student_retaking_exam']);        
+Route::post('student/list/quit/{grade}/{year}', [ServicesController::class, 'get_student_quitting']);      
+Route::post('student/list/retaking_exam', [ServicesController::class, 'get_student_retaking_exam']);        
 Route::post('number/student', [ServicesController::class, 'get_number_student_by_grade']);
 
 //Route to get informations about modules

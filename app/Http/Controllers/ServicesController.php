@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Mark;
 use App\Models\Grade;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -199,15 +200,24 @@ class ServicesController extends Controller
     }
 
     /**
-     * Mamerina etudiant(F/M) dans une classe donnée en une année donnée
+     * Get list of all students having quitted in a specified grade and year
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  string $grade
      * @param  int $year
      * @return \Illuminate\Http\Response
      */
-    public function get_student_quitting(string $grade,int $year)
+    public function get_student_quitting(Request $request, string $grade, int $year)
     {
-        $grades = Grade::all()->where('name', $grade)->where('school_year', $year)->where('quit', 1);
+        //The request can send a specified group of the students
+        if ($request->group) 
+        {
+            $grades = Grade::all()->where('name', $grade)->where('group', $request->group)->where('school_year', $year)->where('quit', 1);    
+        }
+        else
+        {
+            $grades = Grade::all()->where('name', $grade)->where('school_year', $year)->where('quit', 1);
+        }
         $students = [];
         foreach ($grades as $grade) 
         {
@@ -217,5 +227,45 @@ class ServicesController extends Controller
         }
 
         return $students;
+    }
+
+    public function get_student_retaking_exam(Request $request)
+    {
+        $request->validate([
+            'grade' =>'required'          ,
+            'school_year' => 'required'   ,
+            // 'group' => 'required'      ,
+        ]);
+
+        if ($request->group) 
+        {
+            $grades = Grade::all()->where('name', $request->grade)->where('group', $request->group)->where('school_year', $request->school_year);    
+        }
+        else
+        {
+            $grades = Grade::all()->where('name', $request->grade)->where('school_year', $request->school_year);
+        }
+
+        $marks = Mark::all()->where('retake_exam', 1)->where(('created_at.year'), $request->school_year);
+
+        $students = [];
+        foreach ($grades as $grade) 
+        {
+            foreach ($marks as $mark) 
+            {
+                if ($mark->student_id == $grade->student_id) 
+                {
+                    $students[] = [
+                        'student_id'=> $grade->student_id   ,
+                        'mark'=> ['score'=>$mark->score, 
+                                    'semester'=>$mark->semester, 
+                                  'module'=>$mark->module]
+                    ];
+                }
+            }
+        }
+
+        return $students;
+
     }
 }
