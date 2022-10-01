@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Mark;
 use App\Models\Grade;
+use App\Models\Module;
 use App\Models\Student;
 use Illuminate\Http\Request;
 
@@ -134,6 +135,33 @@ class ServicesController extends Controller
     }
 
     /**
+     * Insert the new score of a student having a re-take exam
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function retake_exam(Request $request, $id)
+    {
+        //update score and increment by one: retake_exam column. Verify if it's above 10, if no, increment the retake_exam column again
+        $request->validate([
+            'school_year' => 'required'   ,
+            'module' => 'required'        ,
+            'semester' => 'required'      ,
+            'score' => 'required'      ,
+        ]);
+        $module = Module::all()->where('code', $request->module)->first();
+        $mark = Mark::all()->where('student_id', $id)->where('module_id', $module->id)->where('semester', $request->semester)->first();
+        if ($request->score < 10) 
+        {
+            return $mark->update(["score"=>$request->score,
+                                  "retake_exam"=> $mark->retake_exam + 2]);
+        }
+        return $mark->update(["score"=>$request->score,
+                              "retake_exam"=> $mark->retake_exam + 1]);
+    }
+    
+    /**
      * Mamerina nombre des etudiant dans une classe donnée en une année donnée
      *
      * @param  \Illuminate\Http\Request  $request
@@ -212,11 +240,17 @@ class ServicesController extends Controller
         //The request can send a specified group of the students
         if ($request->group) 
         {
-            $grades = Grade::all()->where('name', $grade)->where('group', $request->group)->where('school_year', $year)->where('quit', 1);    
+            $grades = Grade::all()->where('name', $grade)
+                                ->where('group', $request->group)
+                                ->where('school_year', $year)
+                                ->where('quit', 1);    
         }
         else
         {
-            $grades = Grade::all()->where('name', $grade)->where('school_year', $year)->where('quit', 1);
+            $grades = Grade::all()
+                                    ->where('name', $grade)
+                                    ->where('school_year', $year)
+                                    ->where('quit', 1);
         }
         $students = [];
         foreach ($grades as $grade) 
@@ -229,6 +263,12 @@ class ServicesController extends Controller
         return $students;
     }
 
+    /**
+     * Get list of students who are retaking the exam
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function get_student_retaking_exam(Request $request)
     {
         $request->validate([
@@ -239,11 +279,14 @@ class ServicesController extends Controller
 
         if ($request->group) 
         {
-            $grades = Grade::all()->where('name', $request->grade)->where('group', $request->group)->where('school_year', $request->school_year);    
+            $grades = Grade::all()->where('name', $request->grade)
+                                  ->where('group', $request->group)
+                                  ->where('school_year', $request->school_year);    
         }
         else
         {
-            $grades = Grade::all()->where('name', $request->grade)->where('school_year', $request->school_year);
+            $grades = Grade::all()->where('name', $request->grade)
+                                  ->where('school_year', $request->school_year);
         }
 
         $marks = Mark::all()->where('retake_exam', 1)->where(('created_at.year'), $request->school_year);
@@ -256,10 +299,11 @@ class ServicesController extends Controller
                 if ($mark->student_id == $grade->student_id) 
                 {
                     $students[] = [
-                        'student_id'=> $grade->student_id   ,
-                        'mark'=> ['score'=>$mark->score, 
-                                    'semester'=>$mark->semester, 
-                                  'module'=>$mark->module]
+                        'student_id'=> $grade->student_id    ,
+                        'mark'=> ['score'=>$mark->score      , 
+                                  'semester'=>$mark->semester, 
+                                  'module'=>$mark->module
+                                  ]
                     ];
                 }
             }

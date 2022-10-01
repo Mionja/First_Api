@@ -22,6 +22,8 @@ Route::post('student/pass/{id}', [ServicesController::class, 'pass']);
 Route::post('student/redouble/{id}', [ServicesController::class, 'redouble']);
 Route::post('student/finish/{id}', [ServicesController::class, 'finish_study']);
 Route::post('student/quit/{id}', [ServicesController::class, 'quit']);
+Route::post('student/retake_exam/{id}', [ServicesController::class, 'retake_exam']);
+
 
 //Route for lists about students
 Route::post('student/list/gender', [ServicesController::class, 'get_student_by_grade_and_gender']);        

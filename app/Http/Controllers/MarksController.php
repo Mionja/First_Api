@@ -29,10 +29,7 @@ class MarksController extends Controller
         ]);
         $module = Module::all()->where('code', $request->module)->first();
         $student = Student::all()->where('email', $request->email)->first();
-        if (! $request->score) 
-        {
-            $request->score = 0;
-        }
+       
         if ($request->score < 10) {
             return Mark::create([
                 "module_id"=>$module['id']      ,
@@ -44,12 +41,7 @@ class MarksController extends Controller
     
         }
 
-        return Mark::create([
-            "module_id"=>$module['id']      ,
-            "student_id"=>$student['id']    ,
-            "semester"=>$request->semester  ,
-            "score"=>$request->score  ,
-        ]);
+        return Mark::create([$request->all()]);
 
     }
 
