@@ -6,8 +6,9 @@ use App\Models\Mark;
 use App\Models\Grade;
 use App\Models\Module;
 use App\Models\Student;
+use Hamcrest\Arrays\IsArray;
 use Illuminate\Http\Request;
-
+use Ramsey\Uuid\Type\Integer;
 
 class MarksController extends Controller
 {
@@ -84,7 +85,7 @@ class MarksController extends Controller
     }
 
   /**
-     *Get all list of modules of a specified grade and a specified year
+     *Get all list of modules of a specified grade
      *
      * @param  string  $grade
      * @return \Illuminate\Http\Response
@@ -155,6 +156,7 @@ class MarksController extends Controller
      * 
      * @param  String  $grade
      * @param  int  $year
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function get_average_point_of_student_by_grade(String $grade, int $year, int $id)
@@ -173,7 +175,6 @@ class MarksController extends Controller
         {
             return ['message'=> "Fail"];
         }
-        // --------------Then just divide the sum of score with the number of modules--------------
         $average_point = $sum_score / $module_number;
         return $average_point;
     }
@@ -187,7 +188,7 @@ class MarksController extends Controller
      */
     public function get_average_point_of_all_students_by_grade(String $grade, int $year)
     {
-        $students = Grade::all()->where('name', $grade)->where('school_year', $year);
+        $students = Grade::all()->where('name', $grade)->where('school_year', $year)->where('quit', 0);
         $number_students = 0;
         $sum_ap_all_students = 0;
         foreach ($students as $student) 
@@ -235,10 +236,10 @@ class MarksController extends Controller
         {
             $number_students++;
             $ap_all_students = $this->get_average_point_of_student_by_grade($grade, $year,  $student->student_id);
-            if ($ap_all_students->isArray()) 
-            {
-                return['message'=>'Fail'];
-            }
+            // if (typeOf($ap_all_students) == IsArray) 
+            // {
+            //     return['message'=>'Fail'];
+            // }
             $sum_ap_all_students += $ap_all_students;
         }
         $average_point = $sum_ap_all_students / $number_students;

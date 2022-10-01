@@ -63,7 +63,6 @@ class ServicesController extends Controller
         }
 
     }
-
     
     /**
      * Ni-Redouble
@@ -127,7 +126,7 @@ class ServicesController extends Controller
                             ->where('name', $request->grade)
                             ->where('school_year', $request->school_year)
                             ->first();
-        return['grade'=>$grade->update([
+        return['Quit'=>$grade->update([
             'quit' => 1
             ])];                            
 
@@ -139,7 +138,7 @@ class ServicesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function get_number_student_by_grade_of_year(Request $request)
+    public function get_number_student_by_grade(Request $request)
     {
         $request->validate([
             'grade' =>'required'          ,
@@ -186,11 +185,37 @@ class ServicesController extends Controller
             if ($grade->student->gender == $request->gender) 
             {
                 $students_with_specified_gender[]=[
-                    'student'=>$grade->student
+                    'student'=>$grade->student      ,
+                    'grade'=>[
+                        'name'=>$grade->name                ,    
+                        'school_year'=>$grade->school_year  ,
+                        'group'=> $grade->group
+                        ]           
                 ];        
             }
         }
     
         return $students_with_specified_gender;
+    }
+
+    /**
+     * Mamerina etudiant(F/M) dans une classe donnée en une année donnée
+     *
+     * @param  string $grade
+     * @param  int $year
+     * @return \Illuminate\Http\Response
+     */
+    public function get_student_quitting(string $grade,int $year)
+    {
+        $grades = Grade::all()->where('name', $grade)->where('school_year', $year)->where('quit', 1);
+        $students = [];
+        foreach ($grades as $grade) 
+        {
+            $students[] = [
+                'students'=> $grade->student
+            ];
+        }
+
+        return $students;
     }
 }

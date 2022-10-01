@@ -22,18 +22,21 @@ Route::post('student/pass/{id}', [ServicesController::class, 'pass']);
 Route::post('student/redouble/{id}', [ServicesController::class, 'redouble']);
 Route::post('student/finish/{id}', [ServicesController::class, 'finish_study']);
 Route::post('student/quit/{id}', [ServicesController::class, 'quit']);
+
+//Route for lists about students
 Route::post('student/list/gender', [ServicesController::class, 'get_student_by_grade_and_gender']);        
-Route::post('number/student', [ServicesController::class, 'get_number_student']);
+Route::get('student/list/quit/{grade}/{year}', [ServicesController::class, 'get_student_quitting']);      
+Route::get('student/list/retaking_exam/{grade}/{year}', [ServicesController::class, 'get_student_retaking_exam']);        
+Route::post('number/student', [ServicesController::class, 'get_number_student_by_grade']);
 
 //Route to get informations about modules
 Route::get('module/list/{grade}', [MarksController::class, 'list_module_by_grade']);
 
 //Route to informations about marks of student(s)
 Route::post('mark', [MarksController::class, 'store']);                                                                     //
-Route::get('student/all_marks/{year}/{id}', [MarksController::class, 'get_all_marks_by_year']);
+Route::get('student/marks/{year}/{id}', [MarksController::class, 'get_all_marks_by_year']);
 Route::get('student/average_point/{grade}/{year}/{id}', [MarksController::class, 'get_average_point_of_student_by_grade']); 
 Route::get('student/average_point/{grade}/{year}', [MarksController::class, 'get_average_point_of_all_students_by_grade']);     
 Route::get('student/average_point/{grade}/{year}/{gender}', [MarksController::class, 'get_average_point_of_students_by_gender']);     
 
 });
-
