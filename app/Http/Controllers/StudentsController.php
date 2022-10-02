@@ -6,6 +6,7 @@ use App\Models\Grade;
 use App\Models\Module;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class StudentsController extends Controller
 {
@@ -46,23 +47,42 @@ class StudentsController extends Controller
         $request->validate([
             'name' =>'required'     ,
             'email' => 'required'   ,
-            'gender'=>'required'    ,
+            'gender'=>'required'    ,   //Either F or M
             'age'=>'required'       ,
             'grade' =>'required'    ,
             'group' =>'required'    ,
-            'school_year' =>'required'       ,
+            'school_year' =>'required'       
         ]);
+
+        if ($request->hasFile('photo')) 
+        {
+            $filename = time() . '.' . $request-> photo ->extension();
+            $request->file('photo')->move('img/student_pic/', $filename);
+            $request->photo = $filename;
+        }
+        else
+        {//Get the default photo depending on the gender of the student
+            switch ($request->gender) {
+                case 'F':
+                    $request->photo = 'girl.jpg';       
+                    break;
+                case 'M':
+                    $request->photo = 'boy.jpg';       
+                    break;
+            }
+        }
+        
         $student = Student::create($request->except(['grade', 'school_year', 'group']));
         $grade = Grade::create([
              'student_id' => $student->id            ,
              'name' => $request->grade               ,
-             'group' => $request->grade               ,
+             'group' => $request->grade              ,
              'school_year' => $request->school_year  ,
         ]);
         return [
                 'student'=> $student    ,
-                'grade'=> $grade    ,
-            ];
+                'grade'=> $grade        ,
+        ];
     }
 
     /**
@@ -102,7 +122,18 @@ class StudentsController extends Controller
             'gender'=>'required'    ,
             'age'=>'required'       ,
         ]);
+
         $student = Student::find($student);
+
+        if ($request->hasFile('photo')) 
+        {
+            $destination = "img/student_pic/". $student->photo; 
+            File::delete($destination); 
+
+            $filename = time() . '.' . $request-> photo ->extension();
+            $request->file('photo')->move('img/student_pic/', $filename);
+            $request->photo = $filename;
+        }
         
         $student->update($request->all());
         return $student;

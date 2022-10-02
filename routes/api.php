@@ -30,14 +30,16 @@ Route::middleware(['cors'])->group(function ()
     Route::post('student/list/quit',          [ServicesController::class, 'get_student_quitting']);      
     Route::post('student/list/retaking_exam', [ServicesController::class, 'get_student_retaking_exam']);        
 
-    //Route to get informations about modules
-    Route::get('module/list/{grade}', [MarksController::class, 'list_module_by_grade']);
-
     //Route to informations about marks of student(s)
     Route::post('mark',                                         [MarksController::class, 'store']);
     Route::get('student/marks/{year}/{id}',                     [MarksController::class, 'get_all_marks_by_year']);
     Route::get('student/average_point/{grade}/{year}/{id}',     [MarksController::class, 'get_average_point_of_student_by_grade']); 
     Route::get('student/average_point/{grade}/{year}',          [MarksController::class, 'get_average_point_of_all_students_by_grade']);     
     Route::get('student/average_point/{gender}/{grade}/{year}', [MarksController::class, 'get_average_point_of_students_by_gender']);     
+
+    //Route for other
+    Route::get('module/list/{grade}',         [MarksController::class, 'list_module_by_grade']);
+    Route::post('teacher/add/module/{id}',    [TeachersController::class, 'add_module']);
+    Route::post('teacher/delete/module/{id}', [TeachersController::class, 'delete_module']);
 
 });
