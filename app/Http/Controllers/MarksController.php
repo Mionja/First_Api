@@ -200,11 +200,12 @@ class MarksController extends Controller
     /**
      * Get the average point of all students in a certain grade of a certain year with a specified gender
      * 
+     * @param  String  $gender
      * @param  String  $grade
      * @param  int  $year
      * @return \Illuminate\Http\Response
      */
-    public function get_average_point_of_students_by_gender(String $grade, int $year, String $gender)
+    public function get_average_point_of_students_by_gender( String $gender, String $grade, int $year)
     {
         $students = Student::all()->where('gender', $gender);
         $all_students = [];

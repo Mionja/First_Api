@@ -162,23 +162,39 @@ class ServicesController extends Controller
     }
     
     /**
-     * Mamerina nombre des etudiant dans une classe donnée en une année donnée
+     * Mamerina liste etudiant dans une classe donnée(et groupe) en une année donnée
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function get_number_student_by_grade(Request $request)
+    public function get_student_by_grade(Request $request)
     {
         $request->validate([
             'grade' =>'required'          ,
             'school_year' => 'required'   ,
+            // 'group' => 'required'      ,
         ]);
 
-        $number_student = Grade::all()
-                            ->where('name', $request->grade)
-                            ->where('school_year', $request->school_year)
-                            ->count();
-        return $number_student;
+        if (! $request->group) 
+        {
+            $students = Grade::all()
+                                ->where('name', $request->grade)
+                                ->where('school_year', $request->school_year);
+        }
+        else
+        {
+            $students = Grade::all()
+                                    ->where('name', $request->grade)
+                                    ->where('group', $request->group)
+                                    ->where('school_year', $request->school_year);
+        }
+        $list_student = [];
+        foreach ($students as $student) {
+            $list_student[] = [
+                "students"=>$student->student
+            ];
+        }
+        return $list_student;
     }
 
      /**
@@ -231,26 +247,27 @@ class ServicesController extends Controller
      * Get list of all students having quitted in a specified grade and year
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string $grade
-     * @param  int $year
      * @return \Illuminate\Http\Response
      */
-    public function get_student_quitting(Request $request, string $grade, int $year)
+    public function get_student_quitting(Request $request)
     {
+        $request->validate([
+            'grade' =>'required'          ,
+            'school_year' => 'required'   ,
+        ]);   
         //The request can send a specified group of the students
         if ($request->group) 
         {
-            $grades = Grade::all()->where('name', $grade)
-                                ->where('group', $request->group)
-                                ->where('school_year', $year)
-                                ->where('quit', 1);    
+            $grades = Grade::all()->where('name', $request->grade)
+                                  ->where('group', $request->group)
+                                  ->where('school_year', $request->school_year)
+                                  ->where('quit', 1);    
         }
         else
         {
-            $grades = Grade::all()
-                                    ->where('name', $grade)
-                                    ->where('school_year', $year)
-                                    ->where('quit', 1);
+            $grades = Grade::all()->where('name', $request->grade)
+                                  ->where('school_year', $request->school_year)
+                                  ->where('quit', 1);
         }
         $students = [];
         foreach ($grades as $grade) 
