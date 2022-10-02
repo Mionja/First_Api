@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Teacher extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'email', 'diploma'];
+    protected $fillable = ['name', 'email', 'diploma', 'photo'];
 
      // Relationship with modules
      public function modules() 

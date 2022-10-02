@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Student extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'email', 'age', 'gender'];
+    protected $fillable = ['name', 'email', 'age', 'gender', 'photo'];
 
 
      // Relationship with grades
