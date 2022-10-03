@@ -19,9 +19,9 @@ class TeachersController extends Controller
         $data = [];
         $teachers = Teacher::all();
         foreach($teachers as $teacher){
+            $modules = $teacher->modules;
            $data[] = [
             "teacher" => $teacher,
-            "modules" => $teacher->modules,
            ];
         }
         return $data;
@@ -106,19 +106,19 @@ class TeachersController extends Controller
      */
     public function delete_module(Request $request ,int $id)
     {
-        $request->validate([
-            'module_id' => 'required'    ,
-        ]);
+        // $request->validate([
+        //     'module_id' => 'required'    ,
+        // ]);
 
-        $teacher = Teacher::find($id)->first();
-        $module = Module::findOrFail($request->module_id);
-        //verify if there's still any module related to this specified teacher
-        // if($teacher->modules()->delete($module))
-        {
-            return [
-                'message' => 'success',
-            ];
-        }
+        // $teacher = Teacher::find($id)->first();
+        // $module = Module::findOrFail($request->module_id);
+        // //verify if there's still any module related to this specified teacher
+        // // if($teacher->modules()->delete($module))
+        // {
+        //     return [
+        //         'message' => 'success',
+        //     ];
+        // }
     }
 
     /**
