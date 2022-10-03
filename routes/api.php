@@ -1,15 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MarksController;
 use App\Http\Controllers\AdminsController;
+use App\Http\Controllers\AuthsController;
+use App\Http\Controllers\MarksController;
 use App\Http\Controllers\ModulesController;
+use App\Http\Controllers\ServicesController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\TeachersController;
-use App\Http\Controllers\ServicesController;
 
 Route::middleware(['cors'])->group(function () 
 {
+    Route::post('/login', [AuthsController::class, 'login']);
 
     //Route to all CRUD
     Route::apiresource('admin',   AdminsController::class);
@@ -37,9 +39,17 @@ Route::middleware(['cors'])->group(function ()
     Route::get('student/average_point/{grade}/{year}',          [MarksController::class, 'get_average_point_of_all_students_by_grade']);     
     Route::get('student/average_point/{gender}/{grade}/{year}', [MarksController::class, 'get_average_point_of_students_by_gender']);     
 
-    //Route for other
+    //Route for other informations
     Route::get('module/list/{grade}',         [MarksController::class, 'list_module_by_grade']);
     Route::post('teacher/add/module/{id}',    [TeachersController::class, 'add_module']);
     Route::post('teacher/delete/module/{id}', [TeachersController::class, 'delete_module']);
 
+    
+    // protected routes
+    Route::group(['middleware'=> 'auth:sanctum'],
+    function () 
+    {
+        Route::post('/logout',   [AuthsController::class, 'logout']);
+        Route::post('/register', [AuthsController::class, 'register']);
+    });
 });
