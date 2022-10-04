@@ -1,13 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminsController;
 use App\Http\Controllers\AuthsController;
 use App\Http\Controllers\MarksController;
+use App\Http\Controllers\AdminsController;
 use App\Http\Controllers\ModulesController;
 use App\Http\Controllers\ServicesController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\TeachersController;
+use App\Http\Controllers\DownloadsController;
 
 Route::middleware(['cors'])->group(function () 
 {
@@ -43,7 +44,7 @@ Route::middleware(['cors'])->group(function ()
     Route::get('module/list/{grade}',         [MarksController::class, 'list_module_by_grade']);
     Route::post('teacher/add/module/{id}',    [TeachersController::class, 'add_module']);
     Route::post('teacher/delete/module/{id}', [TeachersController::class, 'delete_module']);
-
+    Route::get('download/pdf/marks/{year}/{semester}/{id}', [DownloadsController::class, 'download_pdf_marks_students']);
     
     // protected routes
     Route::group(['middleware'=> 'auth:sanctum'],
