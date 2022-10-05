@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 
@@ -25,13 +26,29 @@ class AdminsController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' =>'required'     ,
-            'email' => 'required'   ,
+        $fields = $request->validate([
+            'name'=>'required|string',
+            'email'=>'required|string|unique:users,email',
+            'password'=>'required|string',
             'status'=>'required'    ,
-        ]
-        );
-        return Admin::create($request->all());    
+        ]);
+
+        $user = User::create([
+            'name'=> $fields['name'],
+            'email'=> $fields['email'],
+            'admin'=> 1,
+            'password'=> bcrypt($fields['password']),
+        ]);
+        Admin::create($request->except('password'));
+
+        $token = $user->createToken('mytoken')->plainTextToken;
+
+        $response = [
+            'user'=> $user,
+            'token'=> $token,
+        ];
+        
+        return $response;
     }
 
     /**
@@ -67,6 +84,16 @@ class AdminsController extends Controller
      */
     public function destroy($id)
     {
-        return Admin::destroy($id);
+        $admin = Admin::find($id);
+        $user = User::all()->where('email', $admin->email)->first();
+        
+        if(Admin::destroy($id) && User::destroy($user->id))
+        {
+            return['message'=>'Admin deleted successfully'] ;
+        }
+        else
+        {
+            return['message'=>'Failed to delete admin'] ;
+        }
     }
 }

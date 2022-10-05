@@ -52,6 +52,5 @@ Route::middleware(['cors'])->group(function ()
     function () 
     {
         Route::post('/logout',   [AuthsController::class, 'logout']);
-        Route::post('/register', [AuthsController::class, 'register']);
     });
 });

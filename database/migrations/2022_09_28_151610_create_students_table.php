@@ -19,7 +19,7 @@ class CreateStudentsTable extends Migration
             $table->string('email');
             $table->integer('age');
             $table->string('gender');
-            $table->string('photo');
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }

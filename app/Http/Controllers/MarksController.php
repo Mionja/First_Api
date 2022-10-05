@@ -250,6 +250,7 @@ class MarksController extends Controller
     {
         $student = Student::find($id);
         Mail::to('mionjaranaivoarison@gmail.com')->send(new RetakeExamMail($student));
+        
         if(! Mail::failures())        
         {
             return ['message'=>'success'];

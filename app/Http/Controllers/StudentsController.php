@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Grade;
 use App\Models\Module;
 use App\Models\Student;
@@ -44,14 +45,15 @@ class StudentsController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $fields = $request->validate([
             'name' =>'required'     ,
-            'email' => 'required'   ,
+            'email' => 'required|string|unique:users,email'   ,
             'gender'=>'required'    ,   //Either F or M
             'age'=>'required'       ,
             'grade' =>'required'    ,
             'group' =>'required'    ,
-            'school_year' =>'required'       
+            'school_year' =>'required'  ,
+            'password'=>'required|string', 
         ]);
 
         if ($request->hasFile('photo')) 
@@ -60,29 +62,30 @@ class StudentsController extends Controller
             $request->file('photo')->move('img/student_pic/', $filename);
             $request->photo = $filename;
         }
-        else
-        {//Get the default photo depending on the gender of the student
-            switch ($request->gender) {
-                case 'F':
-                    $request->photo = 'girl.jpg';       
-                    break;
-                case 'M':
-                    $request->photo = 'boy.jpg';       
-                    break;
-            }
-        }
-        
-        $student = Student::create($request->except(['grade', 'school_year', 'group']));
+
+        $user = User::create([
+            'name'=> $fields['name'],
+            'email'=> $fields['email'],
+            'password'=> bcrypt($fields['password']),
+        ]);
+        $student = Student::create($request->except(['grade', 'school_year', 'group', 'password']));
         $grade = Grade::create([
              'student_id' => $student->id            ,
              'name' => $request->grade               ,
-             'group' => $request->grade              ,
+             'group' => $request->group              ,
              'school_year' => $request->school_year  ,
         ]);
-        return [
-                'student'=> $student    ,
-                'grade'=> $grade        ,
+
+        $token = $user->createToken('mytoken')->plainTextToken;
+
+        $response = [
+            'user'=> $user          ,
+            'token'=> $token        ,
+            'student'=> $student    ,
+            'grade'=> $grade        
         ];
+
+        return $response;
     }
 
     /**
@@ -147,8 +150,10 @@ class StudentsController extends Controller
      */
     public function destroy(Student $student)
     {
+        $student = Student::find($student->id);
         $grade = Grade::all()->where('student_id', $student->id);
-        if (Grade::destroy($grade) && Student::destroy($student->id)) 
+        $user = User::all()->where('email', $student->email)->first();
+        if (Grade::destroy($grade) && Student::destroy($student->id) && User::destroy($user->id)) 
         {
             return ['message' => 'student deleted successfully'];   
         }
