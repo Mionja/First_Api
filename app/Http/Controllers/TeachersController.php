@@ -50,18 +50,7 @@ class TeachersController extends Controller
             $request->file('photo')->move('img/teacher_pic/', $filename);
             $request->photo = $filename;
         }
-        else
-        {//Get the default photo depending on the gender of the teacher
-            switch ($request->gender) {
-                case 'F':
-                    $request->photo = 'girl.jpg';       
-                    break;
-                case 'M':
-                    $request->photo = 'boy.jpg';       
-                    break;
-            }
-        }
-
+       
         $teacher = Teacher::create($request->except('module_id'));  
         $module = Module::findOrFail($request->module_id);
 
@@ -98,27 +87,27 @@ class TeachersController extends Controller
     }
 
      /**
-     * delete a module for the specified teacher(not working yet)
+     * detach a module for the specified teacher
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function delete_module(Request $request ,int $id)
+    public function detach_module(Request $request ,int $id)
     {
-        // $request->validate([
-        //     'module_id' => 'required'    ,
-        // ]);
+        $request->validate([
+            'module_id' => 'required|int'    ,
+        ]);
 
-        // $teacher = Teacher::find($id)->first();
-        // $module = Module::findOrFail($request->module_id);
-        // //verify if there's still any module related to this specified teacher
-        // // if($teacher->modules()->delete($module))
-        // {
-        //     return [
-        //         'message' => 'success',
-        //     ];
-        // }
+        $teacher = Teacher::find($id)->first();
+        $module = Module::findOrFail($request->module_id);
+
+        if($teacher->modules()->detach($module))
+        {
+            return [
+                'message' => 'success',
+            ];
+        }
     }
 
     /**
@@ -131,9 +120,9 @@ class TeachersController extends Controller
     {
         $teacher = Teacher::find($teacher)->first();
     
+        $modules = $teacher->modules;
         return [
             'teacher' => $teacher,
-            'modules' => $teacher->modules
         ];
     }
 
