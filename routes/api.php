@@ -45,6 +45,7 @@ Route::middleware(['cors'])->group(function ()
     Route::post('teacher/add/module/{id}',    [TeachersController::class, 'add_module']);
     // Route::post('teacher/delete/module/{id}', [TeachersController::class, 'delete_module']);
     Route::get('download/pdf/{year}/{semester}/{id}', [DownloadsController::class, 'download_pdf_marks_students']);
+    Route::get('send/email/{id}', [MarksController::class, 'send_email_retake_exam']);
     
     // protected routes
     Route::group(['middleware'=> 'auth:sanctum'],

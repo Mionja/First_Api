@@ -6,9 +6,10 @@ use App\Models\Mark;
 use App\Models\Grade;
 use App\Models\Module;
 use App\Models\Student;
-use Hamcrest\Arrays\IsArray;
+use App\Mail\RetakeExamMail;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Type\Integer;
+use Illuminate\Support\Facades\Mail;
 
 class MarksController extends Controller
 {
@@ -237,5 +238,24 @@ class MarksController extends Controller
         }
         $average_point = $sum_ap_all_students / $number_students;
         return  $average_point;
+    }
+
+     /**
+     * Send retake exam emails to every student having column retake exam 1 
+     * 
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function send_email_retake_exam(int $id)
+    {
+        $student = Student::find($id);
+        Mail::to('mionjaranaivoarison@gmail.com')->send(new RetakeExamMail($student));
+        if(! Mail::failures())        
+        {
+            return ['message'=>'success'];
+        }
+        else {
+            return ['message'=>"Sorry, mail couldn't be sent"];
+        };
     }
 }

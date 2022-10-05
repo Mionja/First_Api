@@ -47,7 +47,7 @@ class DownloadsController extends Controller
             }
         }
         
-        dd($all_marks);
+        // dd($all_marks);
         $output = '
         <head>
         <meta charset="utf-8">
