@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Module;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
-use PhpParser\Node\Expr\Cast\String_;
+
 
 class ModulesController extends Controller
 {
@@ -19,9 +19,9 @@ class ModulesController extends Controller
         $data = [];
         $modules = Module::all();
         foreach($modules as $module){
+            $teachers = $module->teachers;
            $data[] = [
             "module" => $module,
-            "teachers" => $module->teachers,
            ];
         }
         return $data;
@@ -37,7 +37,7 @@ class ModulesController extends Controller
     {
         $request->validate([
             'name' =>'required'           ,
-            'code' => 'required|min:8'    ,
+            'code' => 'required|min:8|unique:modules,code'    ,
             'hour'=>'required'            ,
         ]
         );
@@ -71,10 +71,9 @@ class ModulesController extends Controller
     public function show(Module $module)
     {
         $module = Module::find($module)->first();
-    
+        $teachers = $module->teachers;
         return [
             'module' => $module        ,
-            'teachers' => $module->teachers
         ];
     }
 
