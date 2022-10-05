@@ -71,7 +71,7 @@ class DownloadsController extends Controller
         //     </div>';
         // }
 
-        // $output .= 'test';
+        $output .= 'test';
         $output .= '
         </body>';
     
