@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthsController;
 use App\Http\Controllers\MarksController;
-use App\Http\Controllers\AdminsController;
 use App\Http\Controllers\ModulesController;
 use App\Http\Controllers\ServicesController;
 use App\Http\Controllers\StudentsController;
@@ -15,7 +14,6 @@ Route::middleware(['cors'])->group(function ()
     Route::post('/login', [AuthsController::class, 'login']);
 
     //Route to all CRUD
-    Route::apiresource('admin',   AdminsController::class);
     Route::apiresource('teacher', TeachersController::class);
     Route::apiresource('module',  ModulesController::class);
     Route::apiresource('student', StudentsController::class);
