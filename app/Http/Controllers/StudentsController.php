@@ -79,6 +79,7 @@ class StudentsController extends Controller
         $token = $user->createToken('mytoken')->plainTextToken;
 
         $response = [
+            'status'=> 200          ,
             'user'=> $user          ,
             'token'=> $token        ,
             'student'=> $student    ,
