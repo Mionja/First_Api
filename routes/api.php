@@ -26,8 +26,8 @@ Route::middleware(['cors'])->group(function ()
     Route::post('student/retake_exam/{id}', [ServicesController::class, 'retake_exam']);
 
     //Route for lists about students 
-    Route::post('student/list',               [ServicesController::class, 'get_student_by_grade']);
-    Route::post('student/list/gender',        [ServicesController::class, 'get_student_by_grade_and_gender']);        
+    Route::get('student/list/{grade}/{school_year}',               [ServicesController::class, 'get_student_by_grade']);
+    Route::get('student/list/{grade}/{group}/{gender}/{school_year}',      [ServicesController::class, 'get_student_by_grade_and_gender']);        
     Route::post('student/list/quit',          [ServicesController::class, 'get_student_quitting']);      
     Route::post('student/list/retaking_exam', [ServicesController::class, 'get_student_retaking_exam']);        
 

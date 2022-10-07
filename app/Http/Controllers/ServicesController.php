@@ -164,34 +164,21 @@ class ServicesController extends Controller
     /**
      * Mamerina liste etudiant dans une classe donnée(et groupe) en une année donnée
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  string $grade
+     * @param  int $school_year
      * @return \Illuminate\Http\Response
      */
-    public function get_student_by_grade(Request $request)
+    public function get_student_by_grade(string $grade, int $school_year)
     {
-        $request->validate([
-            'grade' =>'required'          ,
-            'school_year' => 'required'   ,
-            // 'group' => 'required'      ,
-        ]);
-
-        if (! $request->group) 
-        {
             $students = Grade::all()
-                                ->where('name', $request->grade)
-                                ->where('school_year', $request->school_year);
-        }
-        else
-        {
-            $students = Grade::all()
-                                    ->where('name', $request->grade)
-                                    ->where('group', $request->group)
-                                    ->where('school_year', $request->school_year);
-        }
+                                ->where('name', $grade)
+                                ->where('school_year', $school_year);
+        
         $list_student = [];
         foreach ($students as $student) {
             $list_student[] = [
-                "students"=>$student->student
+                "student"=>$student->student,
+                "group"=>$student->group
             ];
         }
         return $list_student;
@@ -200,34 +187,31 @@ class ServicesController extends Controller
      /**
      * Mamerina etudiant(F/M) dans une classe donnée en une année donnée
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  string $grade
+     * @param  string $group
+     * @param  string $gender
+     * @param  int $school_year
      * @return \Illuminate\Http\Response
      */
-    public function get_student_by_grade_and_gender(Request $request)
+    public function get_student_by_grade_and_gender(string $grade, string $group,string $gender, int $school_year)
     {
-        $request->validate([
-            'grade' =>'required'          ,
-            'school_year' => 'required'   ,
-            'gender' => 'required'        ,
-        ]);
-
         $students_with_specified_gender = [];
 
-        if ($request->group) 
+        if ($group) 
         {
-            $grades = Grade::all()->where('name', $request->grade)
-                                  ->where('school_year', $request->school_year)
-                                  ->where('group', $request->group)    ;    
+            $grades = Grade::all()->where('name', $grade)
+                                  ->where('school_year', $school_year)
+                                  ->where('group', $group)    ;    
         }
         else
         {
-            $grades = Grade::all()->where('name', $request->grade)
-                                  ->where('school_year', $request->school_year);
+            $grades = Grade::all()->where('name', $grade)
+                                  ->where('school_year', $school_year);
         }
 
         foreach ($grades as $grade) 
         {
-            if ($grade->student->gender == $request->gender) 
+            if ($grade->student->gender == $gender) 
             {
                 $students_with_specified_gender[]=[
                     'student'=>$grade->student      ,
