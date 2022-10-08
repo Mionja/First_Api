@@ -20,7 +20,7 @@ class CreateMarksTable extends Migration
             $table->integer('semester');
             $table->integer('year');
             $table->tinyInteger('retake_exam')->default(0);
-            $table->float('score')->nullable();
+            $table->float('score')->default(0);
             $table->timestamps();
         });
     }

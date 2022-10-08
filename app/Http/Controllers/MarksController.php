@@ -6,6 +6,7 @@ use App\Models\Mark;
 use App\Models\Grade;
 use App\Models\Module;
 use App\Models\Student;
+use Hamcrest\Arrays\IsArray;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Type\Integer;
 
@@ -187,10 +188,10 @@ class MarksController extends Controller
         {
             $number_students++;
             $ap_all_students = $this->get_average_point_of_student_by_grade($grade, $year,  $student->student_id);
-            if ($ap_all_students->isArray()) 
-            {
-                return['message'=>'Fail'];
-            }
+            // if ($ap_all_students ) 
+            // {
+            //     return['message'=>'Fail'];
+            // }
             $sum_ap_all_students += $ap_all_students;
         }
         $average_point = $sum_ap_all_students / $number_students;
