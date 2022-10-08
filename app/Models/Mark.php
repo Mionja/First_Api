@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Mark extends Model
 {
     use HasFactory;
-    protected $fillable = [  'score','semester', 'module_id', 'student_id', 'retake_exam'];
+    protected $fillable = [  'score','semester','year', 'module_id', 'student_id', 'retake_exam'];
 
      // Relationship with modules
      public function module() 

@@ -38,7 +38,7 @@ class DownloadsController extends Controller
         {
             $module = $mark->module;
 
-            $year_mark = explode('-', $mark->created_at)[0];
+            $year_mark = $mark->year;
             if ($year_mark == $year) 
             {
                 $all_marks []= [

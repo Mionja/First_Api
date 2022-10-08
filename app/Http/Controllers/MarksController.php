@@ -6,10 +6,9 @@ use App\Models\Mark;
 use App\Models\Grade;
 use App\Models\Module;
 use App\Models\Student;
-use App\Mail\RetakeExamMail;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Type\Integer;
-use Illuminate\Support\Facades\Mail;
+
 
 class MarksController extends Controller
 {
@@ -64,7 +63,7 @@ class MarksController extends Controller
                 'code'=> $mark->module->code    ,
             ];
 
-            $year_mark = explode('-', $mark->created_at)[0];
+            $year_mark = $mark->year;
             if ($year_mark == $year) 
             {
                 $all_marks []= [

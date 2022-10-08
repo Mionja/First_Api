@@ -17,7 +17,8 @@ class CreateMarksTable extends Migration
             $table->id();
             $table->foreignId('module_id')->constrained()->onDelete('cascade');
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->string('semester');
+            $table->integer('semester');
+            $table->integer('year');
             $table->tinyInteger('retake_exam')->default(0);
             $table->float('score')->nullable();
             $table->timestamps();
