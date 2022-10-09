@@ -181,20 +181,28 @@ class MarksController extends Controller
     public function get_average_point_of_all_students_by_grade(String $grade, int $year)
     {
         $students = Grade::all()->where('name', $grade)->where('school_year', $year)->where('quit', 0);
-        $number_students = 0;
-        $sum_ap_all_students = 0;
+        $s = [];
+        $retake_module = "";
         foreach ($students as $student) 
         {
-            $number_students++;
-            $ap_all_students = $this->get_average_point_of_student_by_grade($grade, $year,  $student->student_id);
-            if ($ap_all_students->isArray()) 
+            $average_point = $this->get_average_point_of_student_by_grade($grade, $year,  $student->student_id);
+            $all_marks = $this->get_all_marks_by_year($year, $student->student_id);
+            foreach ($all_marks as $mark) 
             {
-                return['message'=>'Fail'];
+                if (($mark['marks']['score']) < 10) {
+                    $retake_module .= ", ". $mark['marks']['module']['code'];
+                }
             }
-            $sum_ap_all_students += $ap_all_students;
+           
+            $s[] = [
+                'data'=>['student'=>$student->student, 
+                        'average_point'=>$average_point,
+                        'group'=>$student->group, 
+                        'retake_module'=>$retake_module] 
+            ];
         }
-        $average_point = $sum_ap_all_students / $number_students;
-        return  $average_point;
+
+        return $s;
     }
 
     /**
