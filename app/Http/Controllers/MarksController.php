@@ -171,6 +171,63 @@ class MarksController extends Controller
         return $average_point;
     }
 
+ /**
+     * Get the average point of all students in a certain grade of a certain year
+     * 
+     * @param  String  $grade
+     * @param  int  $year
+     * @return \Illuminate\Http\Response
+     */
+    public function get_average_point_of_all_students_by_grade(String $grade, int $year)
+    {
+        $students = Grade::all()->where('name', $grade)->where('school_year', $year)->where('quit', 0);
+        $s = [];
+        $retake_module = "";
+        foreach ($students as $student) 
+        {
+            $average_point = $this->get_average_point_of_student_by_grade($grade, $year,  $student->student_id);
+            $all_marks = $this->get_all_marks_by_year($year, $student->student_id);
+            foreach ($all_marks as $mark) 
+            {
+                if (($mark['marks']['score']) < 10) {
+                    $retake_module .= ", ". $mark['marks']['module']['code'];
+                }
+            }
+           
+            $s[] = [
+                'data'=>['student'=>$student->student, 
+                        'average_point'=>$average_point,
+                        'group'=>$student->group, 
+                        'retake_module'=>$retake_module] 
+            ];
+        }
+
+        return $s;
+    }
+
+
+   /**
+     * Get the general average point of all students in a certain grade of a certain year
+     * 
+     * @param  String  $grade
+     * @param  int  $year
+     * @return \Illuminate\Http\Response
+     */
+    public function get_general_average_point_of_all_students_by_grade(String $grade, int $year)
+    {
+        $students = $this->get_average_point_of_all_students_by_grade($grade, $year);
+        $number_students = 0;
+        $sum_ap_all_students = 0;
+        foreach ($students as $student) 
+        {
+            $number_students++;
+           
+            $sum_ap_all_students += $student['data']['average_point'];
+        }
+        $average_point = $sum_ap_all_students / $number_students;
+        return  $average_point;
+    }
+
     /**
      * Get the average point of all students in a certain grade of a certain year with a specified gender
      * 
