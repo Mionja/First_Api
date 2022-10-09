@@ -6,7 +6,6 @@ use App\Models\Mark;
 use App\Models\Grade;
 use App\Models\Module;
 use App\Models\Student;
-use Hamcrest\Arrays\IsArray;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Type\Integer;
 
@@ -170,32 +169,6 @@ class MarksController extends Controller
         }
         $average_point = $sum_score / $module_number;
         return $average_point;
-    }
-
-    /**
-     * Get the average point of all students in a certain grade of a certain year
-     * 
-     * @param  String  $grade
-     * @param  int  $year
-     * @return \Illuminate\Http\Response
-     */
-    public function get_average_point_of_all_students_by_grade(String $grade, int $year)
-    {
-        $students = Grade::all()->where('name', $grade)->where('school_year', $year)->where('quit', 0);
-        $number_students = 0;
-        $sum_ap_all_students = 0;
-        foreach ($students as $student) 
-        {
-            $number_students++;
-            $ap_all_students = $this->get_average_point_of_student_by_grade($grade, $year,  $student->student_id);
-            // if ($ap_all_students ) 
-            // {
-            //     return['message'=>'Fail'];
-            // }
-            $sum_ap_all_students += $ap_all_students;
-        }
-        $average_point = $sum_ap_all_students / $number_students;
-        return  $average_point;
     }
 
     /**
