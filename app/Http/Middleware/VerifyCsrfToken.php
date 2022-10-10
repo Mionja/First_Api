@@ -13,5 +13,15 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'api/student',
+        'api/module',
+        'api/teacher',
+        'api/student/pass/{id}',
+        'api/student/redouble/{id}',
+        'api/student/finish/{id}',
+        'api/student/quit/{id}',
+        'api/student/retake_exam/{id}',
+        'api/mark',
+        'api/teacher/add/module/{id}',
+        'api/teacher/detach/module/{id}',
     ];
 }
