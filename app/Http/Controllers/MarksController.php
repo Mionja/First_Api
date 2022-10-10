@@ -228,6 +228,13 @@ class MarksController extends Controller
         return  $average_point;
     }
 
+    public function get_general_average_point(String $grade)
+    {
+        $g = Grade::all()->where('name', $grade);
+        return $g;
+
+    }
+
     /**
      * Get the average point of all students in a certain grade of a certain year with a specified gender
      * 
