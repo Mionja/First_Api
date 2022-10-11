@@ -33,7 +33,7 @@ Route::middleware(['cors'])->group(function ()
 
     //Route to informations about marks of student(s)
     Route::post('mark',                                         [MarksController::class, 'store']);
-    Route::get('student/general/average_point/{grade}/{year}',                     [MarksController::class, 'get_all_marks_by_year']);
+    Route::get('student/all-marks/{year}/{id}',                     [MarksController::class, 'get_all_marks_by_year']);
     Route::get('student/average_point/{grade}/{year}/{id}',     [MarksController::class, 'get_average_point_of_student_by_grade']); 
     Route::get('student/average_point/{grade}/{year}',          [MarksController::class, 'get_average_point_of_all_students_by_grade']);     
     Route::get('student/general/average_point/{grade}/{year}',          [MarksController::class, 'get_general_average_point_of_all_students_by_grade']);     
