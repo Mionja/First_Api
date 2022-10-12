@@ -39,7 +39,7 @@ class TeachersController extends Controller
             'name' =>'required'      ,
             'email' => 'required'    ,
             'diploma'=>'required'    ,
-            'gender'=>'required'     ,
+            // 'gender'=>'required'     ,
             'module_id' => 'required'
         ]
         );
